@@ -22,20 +22,20 @@ const Footer = () => {
 
 const App = () => {
 
-  const [persons, setPersons] = useState(null)
-  const [message, setMessage] = useState(null)
+  const [persons, setPersons] = useState([])
+  const [message, setMessage] = useState([])
   const [filter, setFilter] = useState('')
   useEffect(() => {
     console.log('effect')
     PersonsService.getAll().then(initialPersons => {
+
+      console.log(initialPersons)
+      console.log(typeof initialPersons)
+      console.log(Array.isArray(initialPersons))
       setPersons(initialPersons)
     })
   }, [])
 
-  // no renderizar nada si notes aún es null
-  if (!persons) {
-    return null
-  }
 
 
   console.log('render', persons, 'persons')
@@ -47,34 +47,90 @@ const App = () => {
         person.name.toLowerCase().includes(filter.toLowerCase())
       )
 
-  const addPerson = (person) => {
+  const addPerson = (personObject) => {
+
+    const existingPerson = persons.find(
+      p => p.name === personObject.name
+    )
+
+    // SI YA EXISTE
+    if (existingPerson) {
+
+      const confirmUpdate = window.confirm(
+        `${personObject.name} is already added to phonebook, replace the old number with a new one?`
+      )
+
+      if (confirmUpdate) {
+
+        const updatedPerson = {
+          ...existingPerson,
+          number: personObject.number
+        }
+
+        PersonsService
+          .update(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+
+            setPersons(
+              persons.map(person =>
+                person.id !== existingPerson.id
+                  ? person
+                  : returnedPerson
+              )
+            )
+
+            setMessage({
+              text: `Person ${returnedPerson.name} updated`,
+              type: 'success'
+            })
+
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          })
+          .catch(error => {
+
+            setMessage({
+              text: `Person couldn't be updated`,
+              type: 'error'
+            })
+
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+          })
+      }
+
+      return
+    }
+
+    // SI NO EXISTE
     PersonsService
-      .create(person)
+      .create(personObject)
       .then(returnedPerson => {
+
         setPersons(persons.concat(returnedPerson))
 
         setMessage({
           text: `Person ${returnedPerson.name} added`,
           type: 'success'
         })
+
         setTimeout(() => {
           setMessage(null)
         }, 5000)
-
-      }).catch(error => {
-        setPersons(persons.filter(n => n.id !== id))
+      })
+      .catch(error => {
 
         setMessage({
-          text: `Person ${returnedPerson.name} wasn't added`,
+          text: `Person couldn't be added`,
           type: 'error'
         })
+
         setTimeout(() => {
           setMessage(null)
         }, 5000)
-
       })
-
-
   }
 
   const deletePerson = (id) => {

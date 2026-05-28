@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
 const password = process.argv[2];
-const argumento2 = process.argv[3];
-const argumento3 = process.argv[4];
 
 if (!password) {
     console.log('Usage: node mongo.js <password>')
@@ -16,13 +14,6 @@ console.log('connecting to', url)
 
 
 
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-})
-const Person = mongoose.model('Persons', personSchema)
-
 personSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
@@ -31,19 +22,9 @@ personSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('Person', personSchema)
 
-mongoose.connect(url)
-    .then(async () => {
 
-        if (argumento2 && argumento3) {
-
-        }
-    })
-
-module.exports = mongoose.model('Note', noteSchema)
-
-mongoose.connect(url)
+/*mongoose.connect(url)
     .then(() => {
 
         app.post('/api/notes', (request, response) => {
@@ -68,4 +49,4 @@ mongoose.connect(url)
     })
     .catch((error) => {
         console.log('error connecting to MongoDB:', error.message)
-    })
+    })*/
