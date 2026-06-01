@@ -121,9 +121,10 @@ const App = () => {
         }, 5000)
       })
       .catch(error => {
+        console.log(error)
 
         setMessage({
-          text: `Person couldn't be added ${error.message}`,
+          text: `Person couldn't be added ${error}`,
           type: 'error'
         })
 
