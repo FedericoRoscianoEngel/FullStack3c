@@ -123,7 +123,7 @@ const App = () => {
       .catch(error => {
 
         setMessage({
-          text: `Person couldn't be added`,
+          text: `Person couldn't be added ${error.message}`,
           type: 'error'
         })
 
