@@ -124,7 +124,7 @@ const App = () => {
         console.log(error)
 
         setMessage({
-          text: `Error : Person couldn't be added ${error.response.data.error}`,
+          text: `${error.response.data.error}`,
           type: 'error'
         })
 
